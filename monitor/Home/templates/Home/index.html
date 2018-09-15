@@ -19,6 +19,7 @@
     </head>
     <body>
         {% if Login %}
+        <img style="-webkit-user-select: none;" src="/Home/Video" >
         <p>欢迎回来, {{user}}! <a href={% url 'changePwIndex' %}>修改密码</a></p>
         {% endif %}
         {% if alertMsg %}

@@ -1,11 +1,37 @@
 from django.shortcuts import render
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse,HttpResponseRedirect,StreamingHttpResponse,HttpResponseServerError
 from .models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators import gzip
 import hmac
 import hashlib
 import os
+import cv2
+import time
 
+class VideoCamera(object):
+    def __init__(self):
+        self.video = cv2.VideoCapture(0)
+    def __del__(self):
+        self.video.release()
+    
+    def get_frame(self):
+        ret,image=self.video.read()
+        ret,jpeg = cv2.imencode('.jpg',image)
+        return jpeg.tobytes()
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield(b'--frame\r\n'
+        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@gzip.gzip_page
+def wtf(request):
+    try:
+        return StreamingHttpResponse(gen(VideoCamera()),content_type="multipart/x-mixed-replace;boundary=frame")
+    except HttpResponseServerError:
+        print("aborted")
 # Create your views here.
 
 context = {
