@@ -14,6 +14,7 @@ context = {
 }
 
 def index(request):
+    response = render(request,'Home/index.html',context)
     if 'user' in request.COOKIES:
         try:
             user = User.objects.get(name=request.COOKIES['user'])
@@ -21,7 +22,7 @@ def index(request):
             print('user in cookie does not exist? strange')
             context['Login'] = False
             context['SuperUser'] = False
-            return render(request,'Home/index.html',context)
+            return response
         if(str(user.cookie) == request.COOKIES['cookie']):
             context['Login'] = True
             context['name'] = user.name
@@ -34,15 +35,13 @@ def index(request):
         context['Login'] = False
     if (context['Login'] == False):
         context['SuperUser'] = False
-    if 'alert' in request.COOKIES:
-        request.COOKIES.pop('alert')
-    else:
-        if 'alertMsg' in context:
-            context.pop('alertMsg')
-    return render(request,'Home/index.html',context)
+    if 'alertMsg' in context:
+        context.pop('alertMsg')
+    return response
 def login(request):
     response = HttpResponseRedirect("/Home/")
     response.set_cookie("alert",'alert')
+    response.set_cookie("cookie",'')
     try:
         user = User.objects.get(name=request.POST['name'])
     except ObjectDoesNotExist:
@@ -57,6 +56,10 @@ def login(request):
         response.set_cookie("cookie",user.cookie)
         response.set_cookie("user",user.name)
         context['alertMsg'] = 'Login Succeed!'
+        context['user'] = user.name
+        context['Login'] = True
+        if user.admin:
+            context['SuperUser'] = True
     else:
         context['Login'] = False
         context['alertMsg'] = 'Login Failed!'
@@ -85,4 +88,25 @@ def initAdmin(request):
     admin.save()
     return HttpResponseRedirect("/Home/")
 
+def changePassword(request):
+    response = HttpResponseRedirect("/Home/")
+    response.set_cookie("alert",'alert')
+    if 'user' in request.COOKIES:
+        try:
+            user = User.objects.get(name=request.COOKIES['user'])
+        except ObjectDoesNotExist:
+            print('user in cookie does not exist? strange')
+            return HttpResponseRedirect("/Home/")
+        if request.POST['newPw'] == request.POST['newPwCheck']:
+            h = hmac.new(key=user.salt,msg=str.encode(request.POST['newPw']),digestmod='sha256')
+            user.password = h.hexdigest()
+            user.save()
+            context['alertMsg'] = 'Change Succeed!'
+        else:
+            context['alertMsg'] = 'Different inputs of password!'    
+    else:
+        context['alertMsg'] = 'Not Login!'
+    return response
 
+def changePasswordIndex(request):
+    return render(request,'Home/changePw.html')

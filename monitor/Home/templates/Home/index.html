@@ -19,7 +19,7 @@
     </head>
     <body>
         {% if Login %}
-        <p>欢迎回来, {{name}}! <a href={% url 'index' %}>修改密码</a></p>
+        <p>欢迎回来, {{user}}! <a href={% url 'changePwIndex' %}>修改密码</a></p>
         {% endif %}
         {% if alertMsg %}
         <script type="text/javascript">alert('{{alertMsg}}')</script>
@@ -30,7 +30,7 @@
             <p>Password:<input type="password" id="password" name="password"/></p>
             <input type="button" value="Login!" onclick="login()"/>
         </form>
-        {% if SuperUser %}
+        {% if Login and SuperUser %}
         <form action='AddUser' id='AddUser' method='POST'>
             {% csrf_token %}
             <p>NewUsername:<input type="text" name="name"/>

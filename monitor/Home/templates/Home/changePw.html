@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://cryptojs.altervista.org/api/functions_cryptography.js"></script>  
+        <script type="text/javascript">
+            var Crypt = new Crypt()
+            function changePw(){
+                let password = document.getElementById('newPw').value
+                password = Crypt.HASH.sha256(password)
+                document.getElementById('newPw').value = password
+                password = document.getElementById('newPwCheck').value
+                password = Crypt.HASH.sha256(password)
+                document.getElementById('newPwCheck').value = password
+                document.getElementById('ChangePw').submit()
+            }
+        </script>
+    </head>
+    <body>
+        <form action="ChangePw" id="ChangePw" method="POST">
+            {% csrf_token %}
+            <p>New Password:<input type="password" name="newPw" id="newPw"/></p>
+            <p>Check Password:<input type="password" name="newPwCheck" id="newPwCheck"/></p>
+            <input type="button" value="Submit!" onclick="changePw()" />
+        </form>
+    </body>
+</html>
