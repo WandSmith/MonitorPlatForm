@@ -1,0 +1,44 @@
+<html>
+    <head>
+            <script type="text/javascript" src="http://cryptojs.altervista.org/api/functions_cryptography.js"></script>  
+            <script type="text/javascript">
+                var Crypt = new Crypt()
+                function login(){
+                    let password = document.getElementById('password').value
+                    password = Crypt.HASH.sha256(password)
+                    document.getElementById('password').value = password
+                    document.getElementById('Login').submit()     
+                }
+                function addUser(){
+                    let password = document.getElementById('newuserpw').value
+                    password = Crypt.HASH.sha256(password)
+                    document.getElementById('newuserpw').value = password
+                    document.getElementById('AddUser').submit()
+                }
+            </script>
+    </head>
+    <body>
+        {% if Login %}
+        <p>欢迎回来, {{name}}! <a href={% url 'index' %}>修改密码</a></p>
+        {% endif %}
+        {% if alertMsg %}
+        <script type="text/javascript">alert('{{alertMsg}}')</script>
+        {% endif %}
+        <form action='Login' id="Login" method='POST'>
+            {% csrf_token %}
+            <p>Username:<input type="text" name="name"/></p>
+            <p>Password:<input type="password" id="password" name="password"/></p>
+            <input type="button" value="Login!" onclick="login()"/>
+        </form>
+        {% if SuperUser %}
+        <form action='AddUser' id='AddUser' method='POST'>
+            {% csrf_token %}
+            <p>NewUsername:<input type="text" name="name"/>
+              Password:<input type="password" id="newuserpw" name="password"/>
+            <input type="button" value="Add" onclick="addUser()"/>
+            </p>
+        </form>
+        {% endif %}
+    </body>
+</html>
+
