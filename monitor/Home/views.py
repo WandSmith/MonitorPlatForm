@@ -136,6 +136,8 @@ def login(request):
         context['Login'] = True
         if user.admin:
             context['SuperUser'] = True
+        else:
+            context['SuperUser'] = False
     else:
         context['Login'] = False
         context['alertMsg'] = 'Login Failed!'
