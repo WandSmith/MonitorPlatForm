@@ -53,7 +53,7 @@ def gen():
 
             # filter out weak detections by ensuring the `confidence` is
             # greater than the minimum confidence
-            if confidence > 0.2:
+            if confidence > 0.4:
                 # extract the index of the class label from the
                 # `detections`, then compute the (x, y)-coordinates of
                 # the bounding box for the object
