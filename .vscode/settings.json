@@ -1,5 +1,5 @@
 {
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
-    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3"
+    "python.linting.enabled": false,
+    "python.pythonPath": "C:\\Users\\fnxdx\\AppData\\Local\\Programs\\Python\\Python36\\python.exe"
 }
