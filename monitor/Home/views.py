@@ -155,6 +155,8 @@ def addUser(request):
     return response
 
 def initAdmin(request):
+    if (len(User.objects.filter(name='WandSmith')) != 0):
+        return HttpResponseRedirect("/Home/")
     admin = User(name="WandSmith")
     hash = hashlib.sha256()
     hash.update(str.encode('WandSmith'))
